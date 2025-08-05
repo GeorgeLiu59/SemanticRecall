@@ -31,6 +31,8 @@ Input Video → Scene Segmentation → CLIP Encoding → Semantic Clustering →
 pip install -r requirements.txt
 ```
 
+(Note sure if this works on every development environment sorry)
+
 ## Usage
 
 ### Basic Usage
