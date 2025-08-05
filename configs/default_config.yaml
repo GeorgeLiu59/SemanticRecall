@@ -1,0 +1,57 @@
+# Default configuration for Semantic Video Understanding System
+
+# Video Processing
+video:
+  frame_sample_rate: 1
+  max_frames_per_scene: 10
+  scene_detection_threshold: 30.0
+  min_scene_length: 1.0
+
+# Scene Encoding
+scene_encoder:
+  clip_model_name: "ViT-B/32"
+  device: "auto"  # "cuda", "cpu", or "auto"
+
+# Semantic Clustering
+clustering:
+  method: "kmeans"  # "kmeans", "spectral", "dbscan"
+  n_clusters: 10
+  random_state: 42
+  similarity_threshold: 0.7
+
+# Memory Hierarchy
+memory:
+  memory_size: 1000
+  embedding_dim: 512
+  similarity_threshold: 0.7
+  use_faiss: true
+
+# MOE Experts
+moe:
+  num_experts: 10
+  input_dim: 512
+  hidden_dim: 256
+  output_dim: 512
+  expert_layers: 3
+  gate_hidden_dim: 128
+  temperature: 1.0
+
+# Training
+training:
+  num_epochs: 100
+  batch_size: 32
+  learning_rate: 1e-3
+
+# Scene Retrieval
+retrieval:
+  method: "semantic"  # "semantic", "temporal", "hybrid"
+  max_results: 10
+  similarity_threshold: 0.7
+  use_caching: true
+
+# Output
+output:
+  save_results: true
+  output_dir: "results"
+  visualizations_dir: "visualizations"
+  show_plots: true 
