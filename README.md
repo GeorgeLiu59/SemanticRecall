@@ -70,23 +70,6 @@ processor.train_moe_experts()
 answer = processor.reason_across_time("What happened to the main character?")
 ```
 
-## Experimental Setup
-
-### Baselines
-- VideoStreaming (temporal memory)
-- Standard temporal segmentation approaches
-- Regular MOE with temporal routing
-
-### Datasets
-- Long video datasets (MovieNet, MAD, LongForm)
-- Video QA datasets requiring cross-temporal reasoning
-
-### Metrics
-- Video understanding accuracy
-- Memory efficiency
-- Computational cost reduction
-- Cross-temporal reasoning performance
-
 ## Project Structure
 
 ```
@@ -112,13 +95,3 @@ answer = processor.reason_across_time("What happened to the main character?")
     ├── basic_usage.py        # Basic usage examples
     └── advanced_usage.py     # Advanced usage examples
 ```
-
-## Expected Results
-
-**Hypothesis**: Semantic scene grouping will outperform temporal grouping by enabling knowledge transfer between similar scenes and reducing redundant computation.
-
-**Expected Improvements**:
-- Improvement in video understanding tasks
-- Reduction in computational cost through scene reuse
-- Better performance on tasks requiring cross-temporal reasoning
-- More efficient memory utilization
