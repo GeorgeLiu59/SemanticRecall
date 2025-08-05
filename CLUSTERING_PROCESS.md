@@ -81,13 +81,10 @@ This document explains the step-by-step process of how video scenes are analyzed
 
 ```
 Semantic Cluster Summary:
-   Cluster 0: Barry B. Benson clings to a rope while hanging onto a moving truck. (12 scenes)
-   Cluster 1: A man holds a jar of honey, examining it with a look of curiosity. (7 scenes)
-   Cluster 2: The cartoon character prepares to use a push pin. (18 scenes)
-   Cluster 3: A bee is shocked by the extensive display of honey with the face of Ray Liotta. (10 scenes)
-   Cluster 4: Barry the Bee is animatedly talking to Vanessa in a grocery store. (6 scenes)
-   Cluster 5: A bee aggressively attacks a human, causing him to react with panic and fear. (24 scenes)
-   Cluster 6: Barry B. Benson is in a high-speed chase through the city streets. (13 scenes)
-   Cluster 7: A bee flies through a city street and then is reflected in a mirror as it flies ... (13 scenes)
-   Cluster 8: A warehouse worker prepares a box of jars for shipping. (3 scenes)
+   Cluster 0: A bee is terrified as it is being chased through a city. (33 scenes)
+   Cluster 1: A man is stung by a bee and reacts with pain. (22 scenes)
+   Cluster 2: Barry is shocked to see Ray Liotta's face on the honey jars. (14 scenes)
+   Cluster 3: A bee flies through the air and heads toward a city street. (26 scenes)
+   Cluster 4: The screen shows a "Family Flicks" logo with two suggestion boxes and a hand ges... (2 scenes)
+   Cluster 5: Barry Bee runs into a man, causing him to freak out. (9 scenes)
 ```
