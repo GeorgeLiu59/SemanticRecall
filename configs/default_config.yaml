@@ -3,7 +3,8 @@
 # Video Processing
 video:
   frame_sample_rate: 1
-  max_frames_per_scene: 10
+  max_frames_per_scene: 20
+  sampling_strategy: "uniform"  # "uniform", "sequential", "keyframe"
   scene_detection_threshold: 30.0
   min_scene_length: 1.0
 

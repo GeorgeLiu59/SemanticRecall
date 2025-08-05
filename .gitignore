@@ -36,7 +36,6 @@ ENV/
 Thumbs.db
 
 # Project specific
-*.mp4
 *.avi
 *.mov
 *.mkv

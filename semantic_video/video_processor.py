@@ -54,20 +54,35 @@ class SemanticVideoProcessor:
         self.device = device
         
         # Initialize components
-        self.scene_encoder = SceneEncoder(device=device, **kwargs)
+        # Filter kwargs for SceneEncoder (accepts frame sampling parameters)
+        scene_encoder_kwargs = {k: v for k, v in kwargs.items() 
+                              if k in ['clip_model_name', 'frame_sample_rate', 'max_frames_per_scene', 'sampling_strategy']}
+        self.scene_encoder = SceneEncoder(device=device, **scene_encoder_kwargs)
+        
+        # Filter kwargs for SemanticClustering (only accepts clustering parameters)
+        clustering_kwargs = {k: v for k, v in kwargs.items() 
+                           if k in ['random_state', 'similarity_threshold']}
         self.semantic_clustering = SemanticClustering(
             method=clustering_method,
             n_clusters=num_clusters,
-            **kwargs
+            **clustering_kwargs
         )
+        
+        # Filter kwargs for MemoryHierarchy (only accepts memory parameters)
+        memory_kwargs = {k: v for k, v in kwargs.items() 
+                        if k in ['embedding_dim', 'similarity_threshold', 'use_faiss']}
         self.memory_hierarchy = MemoryHierarchy(
             memory_size=memory_size,
-            **kwargs
+            **memory_kwargs
         )
+        
+        # Filter kwargs for MOEExperts (only accepts MOE parameters)
+        moe_kwargs = {k: v for k, v in kwargs.items() 
+                     if k in ['input_dim', 'hidden_dim', 'output_dim', 'expert_layers', 'gate_hidden_dim', 'temperature']}
         self.moe_experts = MOEExperts(
             num_experts=num_experts,
             device=device,
-            **kwargs
+            **moe_kwargs
         )
         
         # Initialize scene retrieval after memory hierarchy is built

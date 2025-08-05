@@ -229,14 +229,16 @@ def improved_clustering(embeddings, n_clusters=8):
 def show_clusters(gemini_api_key):
     print("Loading video and detecting scenes...")
     
-    # Initialize processor
+    # Initialize processor with improved temporal sampling
     processor = SemanticVideoProcessor(
         video_path="Bee_Movie_Cropped.mp4",
         num_clusters=8,
         memory_size=100,
         clustering_method="kmeans",
         num_experts=4,
-        device="cuda" if torch.cuda.is_available() else "cpu"
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        max_frames_per_scene=20,  # Use 20 frames instead of 10
+        sampling_strategy="uniform"  # Use uniform temporal sampling
     )
     
     # Detect scenes
@@ -245,7 +247,7 @@ def show_clusters(gemini_api_key):
     print(f"   Found {len(boundaries)} scenes")
     
     # Extract embeddings
-    print("2. Extracting CLIP embeddings...")
+    print("2. Extracting CLIP embeddings with uniform temporal sampling (20 frames per scene)...")
     embeddings = processor.extract_scene_embeddings()
     print(f"   Extracted {len(embeddings)} embeddings")
     

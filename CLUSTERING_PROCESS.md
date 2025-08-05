@@ -14,11 +14,12 @@ This document explains the step-by-step process of how video scenes are analyzed
 ### 2. Frame Extraction & CLIP Encoding
 - **Input**: Scene boundaries from Step 1
 - **Process**: 
-  - Extract middle frame from each scene
+  - Extract frames uniformly distributed across each scene (20 frames max)
   - Encode each frame using CLIP (Contrastive Language-Image Pre-training)
   - Convert visual content to high-dimensional embeddings (512-dimensional vectors)
 - **Output**: Array of CLIP embeddings, one per scene
 - **Purpose**: CLIP embeddings capture semantic meaning of visual content
+- **Improvement**: Uniform temporal sampling ensures better coverage of entire scene duration
 
 ### 3. Semantic Clustering
 - **Input**: CLIP embeddings from Step 2

@@ -24,7 +24,8 @@ class SceneEncoder:
                  clip_model_name: str = "ViT-B/32",
                  device: str = "cuda" if torch.cuda.is_available() else "cpu",
                  frame_sample_rate: int = 1,
-                 max_frames_per_scene: int = 10):
+                 max_frames_per_scene: int = 20,
+                 sampling_strategy: str = "uniform"):
         """
         Initialize the scene encoder.
         
@@ -33,10 +34,12 @@ class SceneEncoder:
             device: Device to run CLIP on
             frame_sample_rate: Sample every Nth frame for efficiency
             max_frames_per_scene: Maximum frames to process per scene
+            sampling_strategy: Frame sampling strategy ("uniform", "sequential", "keyframe")
         """
         self.device = device
         self.frame_sample_rate = frame_sample_rate
         self.max_frames_per_scene = max_frames_per_scene
+        self.sampling_strategy = sampling_strategy
         
         # Load CLIP model
         print(f"Loading CLIP model: {clip_model_name}")
@@ -89,7 +92,72 @@ class SceneEncoder:
         return scene_embeddings
     
     def _extract_scene_frames(self, cap, start_frame: int, end_frame: int) -> List[Image.Image]:
-        """Extract and preprocess frames from a scene."""
+        """
+        Extract frames using the specified sampling strategy.
+        
+        Args:
+            cap: OpenCV video capture object
+            start_frame: Starting frame index
+            end_frame: Ending frame index
+            
+        Returns:
+            List of PIL Images representing sampled frames
+        """
+        if self.sampling_strategy == "uniform":
+            return self._extract_frames_uniform(cap, start_frame, end_frame)
+        elif self.sampling_strategy == "sequential":
+            return self._extract_frames_sequential(cap, start_frame, end_frame)
+        elif self.sampling_strategy == "keyframe":
+            return self._extract_frames_keyframe(cap, start_frame, end_frame)
+        else:
+            print(f"Unknown sampling strategy: {self.sampling_strategy}, using uniform")
+            return self._extract_frames_uniform(cap, start_frame, end_frame)
+    
+    def _extract_frames_uniform(self, cap, start_frame: int, end_frame: int) -> List[Image.Image]:
+        """
+        Extract frames uniformly distributed across the scene duration.
+        
+        This approach ensures better temporal coverage by sampling frames
+        evenly throughout the scene rather than just taking the first N frames.
+        """
+        frames = []
+        total_frames = end_frame - start_frame
+        
+        if total_frames <= 0:
+            return frames
+        
+        # If scene is short enough, take all frames (with frame_sample_rate)
+        if total_frames <= self.max_frames_per_scene * self.frame_sample_rate:
+            step = self.frame_sample_rate
+        else:
+            # Sample uniformly across the scene duration
+            step = total_frames // self.max_frames_per_scene
+        
+        # Ensure step is at least frame_sample_rate
+        step = max(step, self.frame_sample_rate)
+        
+        for i in range(self.max_frames_per_scene):
+            frame_idx = start_frame + (i * step)
+            
+            # Don't go beyond the scene boundary
+            if frame_idx >= end_frame:
+                break
+                
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+            ret, frame = cap.read()
+            
+            if ret:
+                # Convert BGR to RGB and to PIL Image
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                pil_image = Image.fromarray(frame_rgb)
+                frames.append(pil_image)
+        
+        return frames
+    
+    def _extract_frames_sequential(self, cap, start_frame: int, end_frame: int) -> List[Image.Image]:
+        """
+        Extract frames sequentially from the beginning (original approach).
+        """
         frames = []
         frame_count = 0
         
@@ -107,6 +175,37 @@ class SceneEncoder:
                 pil_image = Image.fromarray(frame_rgb)
                 frames.append(pil_image)
                 frame_count += 1
+        
+        return frames
+    
+    def _extract_frames_keyframe(self, cap, start_frame: int, end_frame: int) -> List[Image.Image]:
+        """
+        Extract frames based on visual change detection (keyframes).
+        """
+        frames = []
+        prev_frame = None
+        keyframe_threshold = 20.0  # Adjust based on sensitivity
+        
+        for frame_idx in range(start_frame, end_frame, self.frame_sample_rate):
+            if len(frames) >= self.max_frames_per_scene:
+                break
+                
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+            ret, frame = cap.read()
+            
+            if ret:
+                if prev_frame is None:
+                    # Always include first frame
+                    frames.append(Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+                else:
+                    # Check if this is a keyframe (significant change)
+                    diff = cv2.absdiff(prev_frame, frame)
+                    mean_diff = np.mean(diff)
+                    
+                    if mean_diff > keyframe_threshold:
+                        frames.append(Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+                
+                prev_frame = frame.copy()
         
         return frames
     
